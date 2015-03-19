@@ -1,0 +1,175 @@
+<link rel="import" href="../polymer/polymer.html">
+
+
+<polymer-element name="slider-pages" attributes="sizing overlayHeight overlayWidth">
+    <template>
+        <div horizontal layout center>
+
+            <div layout vertical style="height:{{overlayHeight}}px;width:{{overlayWidth}}px;" class="export-dlg-content">
+                <div flex horizontal layout>
+                    <core-pages id="slides-pages" selected="0" flex>
+                        <template repeat="{{s in slides}}">
+                            <core-image vertical layout end-justified placeholder="data:image/gif;base64,R0lGODdhyADIAOMAAO7u/5aWlqGho9jY5OPj8cLCyqyssLe3vc3N1wAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAyADIAAAE/hDISau9OOvNu/9gKI5kaZ5oqq5s675wLM90bd94ru987//AoHBILBqPyKRyyWw6n9CodEqtWq/YrHbL7Xq/4LB4TC6bz+i0es1uu9/wuHxOr9vv+Lx+z+/7/4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS06kB1tYqA9cUBQEFrgLWAgIqBOEBFNuu1gMs2ugT3d/rAe0r77bsFwMGAQLzEggc8AcQAIJwA+EBuKbQmgF+3iocDHBAXiZ9Fd6dAxhuo4R3/gwnGDgnkqE1BBM0XrN3CSOFgQYM+ouHEsFMAP1i2lQIAN8EhwS6kZPQ74BMnpZcTgiHkoA1AhKxAWDaU+pHqwvrVVVI1ScmpRIwYjxwTqo+r1vTafV6FmtSrRXEak0ooB+8tjzR4v251m0llwSgUnUaAOrJtFMDoESrty9XxYi/wk0sMEBMoRKo7iRK8SiFxu285vQMoIDR0qdNN+rmbxxJlRFLi7u22OG1mDjP4bYb2uFVf+r0CZ+cyOS1oRD/cUM4cN5EA3bDhszqWOHEhBLIZh+qHdnmaFABwIwm9BxLZxAtn6fGvr379/Djy59Pv779+/jz69/Pv7///wAGQyjggAQWaOCBCCao4IIMNujggxBGKOGEFFZo4YUYZqjhhhx26OGHIIYo4ogklmjiiSimqOKKLLbo4oswxijjjDRKEQEAOw==" style="background-color: white;" sizing="{{sizing}}" preload fade src="/img/slider/Slide{{s.id}}.PNG">
+
+                            </core-image>
+                        </template>
+
+
+
+
+
+
+                    </core-pages>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </template>
+    <script>
+    Polymer('slider-pages', {
+        ready: function() {
+            this.slides = [];
+            for (var i = 1; i <= 22; i++) {
+                this.slides.push({
+                    'id': i
+                });
+            };
+
+        },
+        slideToPrev: function() {
+
+
+            var pages = document.querySelector("slider-pages::shadow #slides-pages");
+            // console.log(pages.selected);
+            if (pages.selected > 0) {
+                pages.selected--;
+                // console.log(pages.selected);
+            };
+            // console.log(this);
+
+
+        },
+        slideToNext: function() {
+
+
+            var pages = document.querySelector("slider-pages::shadow #slides-pages");
+            if (pages.selected < pages.children.length - 2) {
+                pages.selected++;
+                // console.log(pages.selected);
+            };
+            // console.log(this);
+
+
+        }
+
+
+    });
+    </script>
+</polymer-element>
+<polymer-element name="tk-slider" attributes="opened autoCloseDisabled">
+    <template>
+        <core-overlay id="dialog" class="dialog" layered="" backdrop="" opened="{{opened}}" autoclosedisabled="{{autoCloseDisabled}}" transition="core-transition-center">
+            <!-- place all overlay styles inside the overlay target -->
+            <div vertical="" layout="" style="background-color: white;">
+                <slider-pages id="slider" overlayHeight="{{overlayHeight}}" overlayWidth="{{overlayWidth}}" sizing="{{sizing}}"></slider-pages>
+                <div center-justified horizontal="" layout="">
+                    <div flex>
+
+                    </div>
+                    <div>
+                        <paper-fab mini="" icon="arrow-back" id="slider-dialog-prev" on-tap="{{slideToPrev}}"></paper-fab>
+
+                        <paper-fab mini="" icon="arrow-forward" id="slider-dialog-next" on-tap="{{slideToNext}}"></paper-fab>
+                    </div>
+                    <div flex end-justified horizontal="" layout="" style="padding:15px;overflow:hidden;">
+                        <div>Autoshow</div>
+                        <paper-toggle-button checked="" id="autoshow" role="button" aria-pressed="true" tabindex="0" on-change="{{autoshowcookie}}"></paper-toggle-button>
+                    </div>
+
+
+
+                </div>
+            </div>
+
+        </core-overlay>
+
+        <paper-icon-button icon="perm-media" id="slider-dialog-button" on-tap="{{tapHandler}}">
+
+        </paper-icon-button>
+    </template>
+    <script>
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+        }
+        return "";
+    }
+    var wHeight = window.innerHeight - 40;
+    var wWidth = window.innerWidth;
+    var slideWidth = wHeight * 1.33;
+    var sizing = "cover";
+    if (slideWidth < wWidth) {
+        slideWidth = slideWidth < wWidth ? slideWidth : wWidth;
+        sizing = "contain";
+    };
+
+
+    slideWidth = slideWidth - 100;
+    Polymer('tk-slider', {
+
+      
+        ready: function() {
+            var disableSlider = getCookie("disableSlider");
+            if (disableSlider) {
+                this.$.autoshow.checked = false;
+
+            } else {
+                this.$.dialog.toggle();;
+            }
+
+        },
+        autoshowcookie: function() {
+            if (this.$.autoshow.checked) {
+                setCookie("disableSlider", "", 365);
+
+            } else {
+                setCookie("disableSlider", true, 365);;
+            }
+
+
+        },
+        tapHandler: function() {
+            this.$.dialog.toggle();
+        },
+        slideToPrev: function() {
+
+            var slider = this.$.slider;
+            slider.slideToPrev();
+
+        },
+        slideToNext: function() {
+            var slider = this.$.slider;
+            slider.slideToNext();
+        },
+        overlayHeight: wHeight - 20,
+        overlayWidth: slideWidth,
+        sizing: sizing
+
+
+    });
+    </script>
+</polymer-element>
